@@ -1,41 +1,49 @@
 <template>
-  <div style="">
+  <div id="container">
     <el-input
+      class="ipt"
       type="textarea"
       :autosize="{ minRows: 20}"
-      placeholder="请输入内容"
+      :placeholder="hint"
       v-model="inputStr">
     </el-input>
-    <el-select v-model="initRange"
-      clearable
-      placeholder="选择主要音域"
-      size="small"
-      style="max-width: 130px"
-    >
-      <el-option 
-        v-for="r in ranges"
-        :key="r.value"
-        :label="r.label"
-        :value="r.value"
+    <div id="op">
+      <el-select 
+        v-model="initRange"
+        class="ops"
+        clearable
+        placeholder="选择主要音域"
+        size="small"
+        style="max-width: 130px"
+        >
+        <el-option 
+          v-for="r in ranges"
+          :key="r.value"
+          :label="r.label"
+          :value="r.value"
+        >
+        </el-option>
+      </el-select>
+      <el-select
+        v-model="key"
+        class="ops"
+        clearable
+        placeholder="选择简谱原调"
+        size="small"
+        style="max-width: 130px"
       >
-      </el-option>
-    </el-select>
-    <el-select v-model="key"
-      clearable
-      placeholder="选择简谱原调"
-      size="small"
-      style="max-width: 130px"
-    >
-      <el-option 
-        v-for="k in keyTable"
-        :key="k"
-        :label="k"
-        :value="k"
-      >
-      </el-option>
-    </el-select>
-    <el-button type="primary" v-on:click="convert" size="small">转换</el-button>
+        <el-option 
+          v-for="k in keyTable"
+          :key="k"
+          :label="k"
+          :value="k"
+        >
+        </el-option>
+      </el-select>
+      <el-button class="ops" type="primary" v-on:click="convert" size="small">转换</el-button>
+    </div>
     <el-input
+      class="opt"
       type="textarea"
       :autosize="{ minRows: 20}"
       placeholder="转换结果将在这里显示"
@@ -49,6 +57,7 @@ export default {
   name: 'ConvertPanel',
   data() {
     return {
+      hint: '请输入内容\n\n使用说明：\n"-"表示低音\n"`"表示高音\n"a"表示升半音阶\n例：-1a1`1(F调) -> (4)#4[4](C调)',
       inputStr: '',
       resultStr: '',
       key: '',
@@ -89,26 +98,20 @@ export default {
       for (const i in input) {
         const c = input.charAt(i)
 
-        if (c === 'd') { // 低音
+        if (c === '-') { // 低音
           level = initLevel - 1
           continue
         }
 
-        if (c === 'g') { // 高音
+        if (c === '`') { // 高音
           level = initLevel + 1
           continue
         }
 
-        if (c === 'r') { // 升半key
+        if (c === 'a') { // 升半key
           rise = true
           continue
         }
-
-        if (c === '\n') {
-          result = result.concat(c)
-          continue
-        }
-
 
         const offset = this.cKeyNumTable.indexOf(c)
         if (offset === -1) { // 其他字符
@@ -146,4 +149,30 @@ export default {
   }
 }
 </script>
+
+<style>
+#container {
+  float: left;
+  height: 100%;
+}
+.ipt {
+  float: left;
+  width: 40%;
+  height: 100%;
+}
+#op {
+  float: left;
+  width: 20%;
+  margin-top: 20%;
+  text-align: center;
+}
+.ops {
+  margin-bottom: 5px;
+}
+.opt {
+  float: right;
+  width: 40%;
+  height: 100%;
+}
+</style>
 
